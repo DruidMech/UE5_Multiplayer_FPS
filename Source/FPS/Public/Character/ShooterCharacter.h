@@ -30,9 +30,11 @@ public:
 	virtual USkeletalMeshComponent* GetMesh3P_Implementation() const override;
 	/** ~PlayerInterface */
 	
-protected:
 	virtual void BeginPlay() override;
-
+	virtual void BeginDestroy() override;
+	
+protected:
+	
 private:
 	
 	void Input_CycleWeapon();
