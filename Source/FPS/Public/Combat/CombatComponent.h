@@ -28,18 +28,17 @@ public:
 	void Initiate_Aim_Pressed();
 	void Initiate_Aim_Released();
 	
-	UPROPERTY(EditDefaultsOnly, Category = "FPS|Weapon")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FPS|Weapon")
 	TObjectPtr<UWeaponData> WeaponData;
 	
 	void Equip(AWeapon* Weapon);
 	void SpawnInventory();
 	void DestroyInventory();
 protected:
+	UPROPERTY(Transient, BlueprintReadOnly, ReplicatedUsing = OnRep_CurrentWeapon)
+	TObjectPtr<AWeapon> CurrentWeapon;	
 	
 private:
-	
-	UPROPERTY(Transient, ReplicatedUsing = OnRep_CurrentWeapon)
-	TObjectPtr<AWeapon> CurrentWeapon;
 	
 	UFUNCTION()
 	void OnRep_CurrentWeapon(AWeapon* LastWeapon);
