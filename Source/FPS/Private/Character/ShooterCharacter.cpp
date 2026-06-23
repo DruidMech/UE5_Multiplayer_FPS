@@ -10,6 +10,7 @@
 #include "Data/WeaponData.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Weapon/Weapon.h"
 
 AShooterCharacter::AShooterCharacter()
@@ -46,6 +47,7 @@ AShooterCharacter::AShooterCharacter()
 	Combat->SetIsReplicated(true);
 	
 	DefaultFieldOfView = 90.0f;
+	TurningStatus = ETurningInPlace::NotTurning;
 }
 
 void AShooterCharacter::BeginPlay()
@@ -53,6 +55,9 @@ void AShooterCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	FirstPersonCamera->SetFieldOfView(DefaultFieldOfView);
+	
+	StartingAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
+	
 }
 
 void AShooterCharacter::BeginDestroy()
@@ -88,46 +93,67 @@ void AShooterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	CalculateTurnInPlaceParameters();
+	CalculateTurnInPlaceParameters(DeltaTime);
 	CalculateFABRIKSocketTransform();
 }
 
-void AShooterCharacter::CalculateTurnInPlaceParameters()
+void AShooterCharacter::CalculateTurnInPlaceParameters(float DeltaTime)
 {
-	// Get velocity, see if it's zero
-	// See if we are falling
+	FVector Velocity = GetVelocity();
+	Velocity.Z = 0.f;
+	float Speed = Velocity.Size();
+	bool bIsInAir = GetCharacterMovement()->IsFalling();
 	
-	// if standing still and not jumping
-		// get current aim rotation
-		// get delta aim rotation - the difference in rotation of my current aim rotation from the initial aim rotation
-		// (initial aim rotation is calculated in BeginPlay)
-		// Store the Yaw of the delta aim rotation (AO_Yaw)
-		// if TurningStatus == NotTurning
-			// Set InterpAO_Yaw to AO_Yaw
-		// TurnInPlace() - interpolates the InterpAO_Yaw value to zero.
-	
-	// if running or jumping
-		// reset initial aim rotation to the current actual aim rotation
-		// AO_Yaw = 0
-		// We also need a Movement Offset Yaw to feed to our strafing blendspaces
-		// Get Base Aim Rotation
-		// Get our Movement Rotation - this is the rotation of our Velocity
-		// Movement Offset Yaw = the delta between our movement rotation and our aim rotation
-		// TurningStatus = NotTurning
-	
+	if (Speed == 0.f && !bIsInAir) // standing still, not jumping
+	{
+		FRotator CurrentAimRotation(0.f, GetBaseAimRotation().Yaw, 0.f);
+		// StartingAimRotation initially set in BeginPlay
+		FRotator DeltaAimRotation = UKismetMathLibrary::NormalizedDeltaRotator(CurrentAimRotation, StartingAimRotation);
+		AO_Yaw = DeltaAimRotation.Yaw;
+		
+		if (TurningStatus == ETurningInPlace::NotTurning)
+		{
+			InterpAO_Yaw = AO_Yaw;
+		}
+		
+		TurnInPlace(DeltaTime); // interpolates the InterpAO_Yaw value to zero.
+	}
+
+	if (Speed > 0.f || bIsInAir)
+	{
+		StartingAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
+		AO_Yaw = 0.f;
+		
+		FRotator AimRotation = GetBaseAimRotation();
+		FRotator MovementRotation = UKismetMathLibrary::MakeRotFromX(GetVelocity());
+		MovementOffsetYaw = UKismetMathLibrary::NormalizedDeltaRotator(MovementRotation, AimRotation).Yaw;
+		TurningStatus = ETurningInPlace::NotTurning;
+	}
+
+	AO_Yaw *= -1.f;
 }
 
-// Turn In Place
-	// if AO_Yaw > 90
-		// TurningStatus = Right
-	// else if AO_Yaw < -90
-		// TurningStatus = Left
-	// if TurningStatus != NotTurning (in other words, we are turning left or right)
-		// Interpolate InterpAO_Yaw down to zero.
-		// AO_Yaw = InterpAO_Yaw
-		// if Abs(AO_Yaw) < 5.f
-			// TurningStatus = NotTurning
-			// reset initial aim rotation to our actual aim rotation
+void AShooterCharacter::TurnInPlace(float DeltaTime)
+{
+	if (AO_Yaw > 90.f)
+	{
+		TurningStatus = ETurningInPlace::Right;
+	}
+	else if (AO_Yaw < -90.f)
+	{
+		TurningStatus = ETurningInPlace::Left;
+	}
+	if (TurningStatus != ETurningInPlace::NotTurning) // we are turning
+	{
+		InterpAO_Yaw = FMath::FInterpTo(InterpAO_Yaw, 0.f, DeltaTime, 4.0f);
+		AO_Yaw = InterpAO_Yaw;
+		if (FMath::Abs(AO_Yaw) < 5.f)
+		{
+			TurningStatus = ETurningInPlace::NotTurning;
+			StartingAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
+		}
+	}
+}
 
 void AShooterCharacter::CalculateFABRIKSocketTransform()
 {
