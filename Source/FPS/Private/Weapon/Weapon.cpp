@@ -33,6 +33,7 @@ AWeapon::AWeapon()
 
 	AimFieldOfView = 65.0f;
 	TraceRadius = 5.f;
+	FireTime = 0.1f;
 }
 
 void AWeapon::OnRep_Instigator()
