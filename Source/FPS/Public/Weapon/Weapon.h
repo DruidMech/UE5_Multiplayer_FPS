@@ -47,6 +47,17 @@ public:
 	float FireTime;
 	
 	void Local_Fire(const FVector& ImpactPoint, const FVector& ImpactNormal, TEnumAsByte<EPhysicalSurface> ImpactSurfaceType, bool bIsFirstPerson);
+	void Auth_Fire();
+	void Rep_Fire(int32 AuthAmmo);
+	
+	UPROPERTY(EditAnywhere, Category = "FPS|Ammo")
+	int32 MagCapacity;
+	
+	UPROPERTY(EditAnywhere, Category = "FPS|Ammo")
+	int32 Ammo;
+	
+	UPROPERTY(EditAnywhere, Category = "FPS|Ammo")
+	int32 StartingCarriedAmmo;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -65,4 +76,6 @@ protected:
 private:
 	
 	void SetMeshVisibilities(APawn* OwningPawn) const;
+	
+	int32 Sequence;
 };
