@@ -19,6 +19,7 @@ namespace Reticle
 {
 	const FName RoundedCornerScale = FName("RoundedCornerScale");
 	const FName ShapeCutThickness = FName("ShapeCutThickness");
+	const FName Inner_RGBA = FName("Inner_RGBA");
 }
 
 void UShooterReticle::NativeOnInitialized()
@@ -32,6 +33,7 @@ void UShooterReticle::NativeOnInitialized()
 	_BaseCornerScaleFactor_Aiming = 0.f;
 	_BaseShapeCutFactor_Aiming = 0.f;
 	bAiming = false;
+	bTargetingPlayer = false;
 	
 	GetOwningPlayer()->OnPossessedPawnChanged.AddDynamic(this, &ThisClass::OnPossessedPawnChanged);
 	
@@ -91,6 +93,7 @@ void UShooterReticle::OnPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn)
 		OldPawnCombat->OnAmmoCounterChanged.RemoveDynamic(this, &ThisClass::OnAmmoCounterChanged);
 		OldPawnCombat->OnRoundFired.RemoveDynamic(this, &ThisClass::OnRoundFired);
 		OldPawnCombat->OnAimingStatusChanged.RemoveDynamic(this, &ThisClass::OnAimingStatusChanged);
+		OldPawnCombat->OnTargetingPlayerStatusChanged.RemoveDynamic(this, &ThisClass::OnTargetingPlayerStatusChanged);
 	}
 	UCombatComponent* NewPawnCombat = UCombatComponent::FindCombatComponent(NewPawn);
 	if (IsValid(NewPawnCombat))
@@ -101,6 +104,7 @@ void UShooterReticle::OnPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn)
 		NewPawnCombat->OnAmmoCounterChanged.AddDynamic(this, &ThisClass::OnAmmoCounterChanged);
 		NewPawnCombat->OnRoundFired.AddDynamic(this, &ThisClass::OnRoundFired);
 		NewPawnCombat->OnAimingStatusChanged.AddDynamic(this, &ThisClass::OnAimingStatusChanged);
+		NewPawnCombat->OnTargetingPlayerStatusChanged.AddDynamic(this, &ThisClass::OnTargetingPlayerStatusChanged);
 	}
 }
 
@@ -153,4 +157,14 @@ void UShooterReticle::OnRoundFired(int32 RoundsCurrent, int32 RoundsMax)
 void UShooterReticle::OnAimingStatusChanged(bool bIsAiming)
 {
 	bAiming = bIsAiming;
+}
+
+void UShooterReticle::OnTargetingPlayerStatusChanged(bool bTargeting)
+{
+	bTargetingPlayer = bTargeting;
+	if (CurrentReticle_DynMatInst.IsValid())
+	{
+		FLinearColor ReticleColor = bTargetingPlayer ? FLinearColor::Red : FLinearColor::White;
+		CurrentReticle_DynMatInst->SetVectorParameterValue(Reticle::Inner_RGBA, ReticleColor);
+	}
 }
