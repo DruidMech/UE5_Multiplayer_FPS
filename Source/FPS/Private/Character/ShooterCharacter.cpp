@@ -223,6 +223,11 @@ void AShooterCharacter::WeaponReplicated_Implementation()
 	}
 }
 
+AWeapon* AShooterCharacter::GetCurrentWeapon_Implementation()
+{
+	return Combat->CurrentWeapon;
+}
+
 void AShooterCharacter::Input_CycleWeapon()
 {
 	Combat->Initiate_CycleWeapon();

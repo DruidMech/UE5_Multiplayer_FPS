@@ -35,4 +35,7 @@ public:
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void WeaponReplicated();
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	AWeapon* GetCurrentWeapon();
 };

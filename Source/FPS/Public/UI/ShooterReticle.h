@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "ShooterReticle.generated.h"
 
+class AWeapon;
 class UImage;
 
 UCLASS()
@@ -32,4 +33,10 @@ private:
 	
 	UFUNCTION()
 	void OnWeaponFirstReplicated(AWeapon* Weapon);
+	
+	UFUNCTION()
+	void OnReticleChanged(UMaterialInstanceDynamic* ReticleDynMatInst);
+	
+	UFUNCTION()
+	void OnAmmoCounterChanged(UMaterialInstanceDynamic* AmmoCounterDynMatInst, int32 RoundsCurrent, int32 RoundsMax);
 };
