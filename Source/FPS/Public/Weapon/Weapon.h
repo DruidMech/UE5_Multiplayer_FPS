@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
+#include "ShooterTypes/ShooterTypes.h"
 #include "Weapon.generated.h"
 
 class UMaterialInstanceDynamic;
@@ -48,6 +49,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "FPS|FireType")
 	float FireTime;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "FPS|Reticle")
+	FReticleParams ReticleParams;
 	
 	void Local_Fire(const FVector& ImpactPoint, const FVector& ImpactNormal, TEnumAsByte<EPhysicalSurface> ImpactSurfaceType, bool bIsFirstPerson);
 	void Auth_Fire();
