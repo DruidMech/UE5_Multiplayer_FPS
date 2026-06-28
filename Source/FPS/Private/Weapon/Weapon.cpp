@@ -84,6 +84,15 @@ void AWeapon::AttachToOwningPawn(APawn* Pawn) const
 	Mesh3P->AttachToComponent(PawnMesh3P, FAttachmentTransformRules::KeepRelativeTransform, AttachPoint);
 }
 
+void AWeapon::DetachFromOwningPawn()
+{
+	Mesh1P->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+	Mesh1P->SetHiddenInGame(true);
+	
+	Mesh3P->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+	Mesh3P->SetHiddenInGame(true);
+}
+
 void AWeapon::WeaponTrace(FHitResult& OutHit, float TraceLength)
 {
 	FCollisionQueryParams QueryParams;

@@ -41,6 +41,8 @@ public:
 	void Initiate_Aim_Pressed();
 	void Initiate_Aim_Released();
 	
+	void Notify_CycleWeapon();
+	
 	UPROPERTY(BlueprintAssignable)
 	FReticleChanged OnReticleChanged;
 	
@@ -63,6 +65,11 @@ public:
 	TObjectPtr<UWeaponData> WeaponData;
 	
 	void Equip(AWeapon* Weapon);
+	void EquipWeapon(AWeapon* Weapon);
+	
+	UFUNCTION(Server, Reliable)
+	void Server_EquipWeapon(AWeapon* Weapon);
+	
 	void SpawnInventory();
 	void DestroyInventory();
 	
@@ -82,6 +89,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "FPS|Weapon")
 	float TraceLength;
+	
+	UFUNCTION()
+	void BlendOut_CycleWeapon(UAnimMontage* Montage, bool bInterrupted);
 private:
 	TMap<FGameplayTag, int32> ReserveAmmo;
 	bool bHitPlayerLastFrame;
@@ -91,6 +101,8 @@ private:
 	
 	UFUNCTION()
 	void OnRep_CurrentWeapon(AWeapon* LastWeapon);
+	
+	void SetCurrentWeapon(AWeapon* NewWeapon, AWeapon* LastWeapon);
 	
 	UPROPERTY(Transient, Replicated)
 	TArray<AWeapon*> Inventory;
