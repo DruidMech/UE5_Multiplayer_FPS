@@ -43,7 +43,7 @@ private:
 	void OnPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn);
 	
 	UFUNCTION()
-	void OnWeaponFirstReplicated(AWeapon* Weapon);
+	void OnWeaponFirstReplicated(AWeapon* Weapon, bool bIsTargetingPlayer);
 	
 	UFUNCTION()
 	void OnReticleChanged(UMaterialInstanceDynamic* ReticleDynMatInst, const FReticleParams& ReticleParams, bool bCurrentlyTargetingPlayer);

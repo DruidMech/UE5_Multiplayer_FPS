@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Components/ActorComponent.h"
 #include "GameFramework/Actor.h"
 #include "CombatComponent.generated.h"
@@ -17,6 +18,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAmmoCounterChanged, UMaterialIns
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FRoundFired, int32, RoundsCurrent, int32, RoundsMax);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAimingStatusChanged, bool, bIsAiming);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTargetingPlayerStatusChanged, bool, bIsAiming);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCurrentReserveAmmoChanged, int32, RoundsInReserve, int32, RoundsInWeapon);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class FPS_API UCombatComponent : public UActorComponent
@@ -54,6 +56,9 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FTargetingPlayerStatusChanged OnTargetingPlayerStatusChanged;
 	
+	UPROPERTY(BlueprintAssignable)
+	FCurrentReserveAmmoChanged OnCurrentReserveAmmoChanged;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FPS|Weapon")
 	TObjectPtr<UWeaponData> WeaponData;
 	
@@ -68,12 +73,17 @@ public:
 	TObjectPtr<AWeapon> CurrentWeapon;
 	
 	void InitializeWeaponWidgets() const;
+	
+	UPROPERTY(ReplicatedUsing = OnRep_CurrentReserveAmmo)
+	int32 CurrentReserveAmmo;
+
+	bool bHitPlayer;
 protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "FPS|Weapon")
 	float TraceLength;
 private:
-	bool bHitPlayer;
+	TMap<FGameplayTag, int32> ReserveAmmo;
 	bool bHitPlayerLastFrame;
 	bool bTriggerPressed;
 	FTimerHandle FireTimer;
@@ -98,6 +108,9 @@ private:
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_FireWeapon(const FHitResult& Hit, int32 AuthAmmo);
+	
+	UFUNCTION()
+	void OnRep_CurrentReserveAmmo();
 	
 	void Local_Aim(bool bPressed);
 	void Local_FireWeapon();
