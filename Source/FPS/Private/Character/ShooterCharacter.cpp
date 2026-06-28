@@ -238,6 +238,11 @@ AWeapon* AShooterCharacter::GetCurrentWeapon_Implementation()
 	return Combat->CurrentWeapon;
 }
 
+int32 AShooterCharacter::GetReserveAmmo_Implementation() const
+{
+	return Combat->CurrentReserveAmmo;
+}
+
 void AShooterCharacter::Input_CycleWeapon()
 {
 	Combat->Initiate_CycleWeapon();
