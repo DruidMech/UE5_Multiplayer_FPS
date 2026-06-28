@@ -30,7 +30,7 @@ private:
 	void OnPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn);
 	
 	UFUNCTION()
-	void OnCurrentReserveAmmoChanged(int32 RoundsInReserve, int32 RoundsInWeapon);
+	void OnCurrentReserveAmmoChanged(int32 RoundsInReserve, int32 RoundsInWeapon, UMaterialInterface* WeaponIconMaterial);
 	
 	UFUNCTION()
 	void OnRoundFired(int32 RoundsCurrent, int32 RoundsMax, int32 RoundsInReserve);
