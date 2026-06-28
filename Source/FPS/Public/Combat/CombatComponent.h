@@ -114,4 +114,7 @@ private:
 	
 	void Local_Aim(bool bPressed);
 	void Local_FireWeapon();
+	
+	int32 AdvanceWeaponIndex();
+	int32 Local_WeaponIndex;
 };
