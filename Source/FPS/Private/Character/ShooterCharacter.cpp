@@ -261,6 +261,14 @@ void AShooterCharacter::AddAmmo_Implementation(const FGameplayTag& WeaponType, i
 	}
 }
 
+bool AShooterCharacter::DoDamage_Implementation(float DamageAmount, AActor* DamageInstigator)
+{
+	// Change Health by DamageAmount
+	// Play a Hit React montage (also multicast hit react)
+	// calculate whether or not damage was leathal
+	return false;
+}
+
 void AShooterCharacter::Input_CycleWeapon()
 {
 	Combat->Initiate_CycleWeapon();
