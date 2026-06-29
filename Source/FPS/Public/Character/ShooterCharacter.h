@@ -8,6 +8,7 @@
 #include "ShooterTypes/ShooterTypes.h"
 #include "ShooterCharacter.generated.h"
 
+class UHealthComponent;
 class UCombatComponent;
 class UCameraComponent;
 class USpringArmComponent;
@@ -63,6 +64,10 @@ public:
 	TArray<TObjectPtr<UAnimMontage>> HitReacts;
 	
 protected:
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "FPS|Health")
+	TObjectPtr<UHealthComponent> Health;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "FPS|Combat")
 	TObjectPtr<UCombatComponent> Combat;
 	
