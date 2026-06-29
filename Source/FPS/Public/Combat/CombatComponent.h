@@ -136,4 +136,12 @@ private:
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_CycleWeapon(int32 WeaponIndex);
+	
+	void Local_ReloadWeapon();
+	
+	UFUNCTION(Server, Reliable)
+	void Server_ReloadWeapon();
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_ReloadWeapon(int32 NewWeaponAmmo, int32 NewCarriedAmmo);
 };
