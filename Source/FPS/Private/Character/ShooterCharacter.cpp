@@ -268,8 +268,10 @@ void AShooterCharacter::AddAmmo_Implementation(const FGameplayTag& WeaponType, i
 
 bool AShooterCharacter::DoDamage_Implementation(float DamageAmount, AActor* DamageInstigator)
 {
-	// Change Health by DamageAmount
-	// calculate whether or not damage was leathal
+	if (!IsValid(Health)) return false;
+	
+	Health->ChangeHealthByAmount(-DamageAmount, DamageInstigator);
+	// calculate whether or not damage was lethal
 	
 	const int32 MontageSelection = FMath::RandRange(0, HitReacts.Num() - 1);
 	Multicast_HitReact(MontageSelection);
