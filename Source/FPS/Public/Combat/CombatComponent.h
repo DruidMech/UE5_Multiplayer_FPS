@@ -44,6 +44,8 @@ public:
 	void Notify_CycleWeapon();
 	void Notify_ReloadWeapon();
 	
+	void AddAmmo(const FGameplayTag& WeaponType, int32 AmmoAmount);
+	
 	UPROPERTY(BlueprintAssignable)
 	FReticleChanged OnReticleChanged;
 	
@@ -86,6 +88,7 @@ public:
 	int32 CurrentReserveAmmo;
 
 	bool bHitPlayer;
+
 protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "FPS|Weapon")
