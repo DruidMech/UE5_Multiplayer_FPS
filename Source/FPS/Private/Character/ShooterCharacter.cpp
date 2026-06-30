@@ -299,6 +299,10 @@ void AShooterCharacter::Multicast_HitReact_Implementation(int32 MontageIndex)
 
 void AShooterCharacter::OnDeathStarted()
 {
+	if (HasAuthority())
+	{
+		Combat->DestroyInventory();
+	}
 	if (GetNetMode() != NM_DedicatedServer)
 	{
 		DeathEffects();

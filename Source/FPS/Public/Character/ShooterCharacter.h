@@ -65,6 +65,10 @@ public:
 	
 protected:
 	
+	// 1st person view (arms)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "FPS|Mesh")
+	TObjectPtr<USkeletalMeshComponent> Mesh1P;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "FPS|Health")
 	TObjectPtr<UHealthComponent> Health;
 	
@@ -114,10 +118,6 @@ private:
 	bool bWeaponFirstReplicated;
 	FRotator StartingAimRotation;
 	float InterpAO_Yaw;
-	
-	// 1st person view (arms)
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<USkeletalMeshComponent> Mesh1P;
 	
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USpringArmComponent> SpringArm;
