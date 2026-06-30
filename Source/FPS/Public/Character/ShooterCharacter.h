@@ -63,6 +63,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "FPS|HitReact")
 	TArray<TObjectPtr<UAnimMontage>> HitReacts;
 	
+	UPROPERTY(EditDefaultsOnly, Category = "FPS|Respawn")
+	float RespawnTime;
 protected:
 	
 	// 1st person view (arms)
@@ -118,6 +120,9 @@ private:
 	bool bWeaponFirstReplicated;
 	FRotator StartingAimRotation;
 	float InterpAO_Yaw;
+	FTimerHandle DeathTimer;
+	
+	void DeathTimerFinished();
 	
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USpringArmComponent> SpringArm;

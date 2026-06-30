@@ -4,6 +4,7 @@
 #include "Character/ShooterCharacter.h"
 
 #include "EnhancedInputComponent.h"
+#include "TimerManager.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Combat/CombatComponent.h"
@@ -11,9 +12,11 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Data/WeaponData.h"
 #include "FPS/FPS.h"
+#include "Game/ShooterGameModeBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Health/HealthComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Player/ShooterPlayerController.h"
 #include "Weapon/Weapon.h"
@@ -57,6 +60,7 @@ AShooterCharacter::AShooterCharacter()
 	DefaultFieldOfView = 90.0f;
 	TurningStatus = ETurningInPlace::NotTurning;
 	bWeaponFirstReplicated = false;
+	RespawnTime = 3.f;
 }
 
 void AShooterCharacter::BeginPlay()
@@ -302,6 +306,7 @@ void AShooterCharacter::OnDeathStarted()
 	if (HasAuthority())
 	{
 		Combat->DestroyInventory();
+		GetWorld()->GetTimerManager().SetTimer(DeathTimer, this, &ThisClass::DeathTimerFinished, RespawnTime);
 	}
 	if (GetNetMode() != NM_DedicatedServer)
 	{
@@ -318,6 +323,15 @@ void AShooterCharacter::OnDeathStarted()
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(FPSTraceChannels::ECC_Weapon, ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(FPSTraceChannels::ECC_Weapon, ECR_Ignore);
+}
+
+void AShooterCharacter::DeathTimerFinished()
+{
+	AShooterGameModeBase* GM = Cast<AShooterGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if (IsValid(GM))
+	{
+		GM->RequestRespawn(this, GetController());
+	}
 }
 
 void AShooterCharacter::Input_CycleWeapon()
