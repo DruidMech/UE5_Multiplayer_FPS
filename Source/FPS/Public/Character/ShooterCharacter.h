@@ -8,6 +8,7 @@
 #include "ShooterTypes/ShooterTypes.h"
 #include "ShooterCharacter.generated.h"
 
+class UEliminationComponent;
 class UHealthComponent;
 class UCombatComponent;
 class UCameraComponent;
@@ -76,6 +77,9 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "FPS|Combat")
 	TObjectPtr<UCombatComponent> Combat;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "FPS|Elimination")
+	TObjectPtr<UEliminationComponent> Elimination;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "FPS|Camera")
 	TObjectPtr<UCameraComponent> FirstPersonCamera;

@@ -11,6 +11,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Data/WeaponData.h"
+#include "Elimination/EliminationComponent.h"
 #include "FPS/FPS.h"
 #include "Game/ShooterGameModeBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -54,6 +55,9 @@ AShooterCharacter::AShooterCharacter()
 	Combat = CreateDefaultSubobject<UCombatComponent>("Combat");
 	Combat->SetIsReplicated(true);
 	
+	Elimination = CreateDefaultSubobject<UEliminationComponent>("Elimination");
+	Elimination->SetIsReplicated(false);
+	
 	Health = CreateDefaultSubobject<UHealthComponent>("Health");
 	Health->SetIsReplicated(true);
 	
@@ -74,6 +78,11 @@ void AShooterCharacter::BeginPlay()
 	if (AShooterPlayerController* PC = Cast<AShooterPlayerController>(GetController()); IsValid(PC))
 	{
 		PC->bPawnAlive = true;
+	}
+	
+	if (HasAuthority())
+	{
+		Combat->OnRoundReported.AddDynamic(Elimination, &UEliminationComponent::OnRoundReported);
 	}
 }
 
