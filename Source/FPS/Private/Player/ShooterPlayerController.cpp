@@ -37,6 +37,12 @@ void AShooterPlayerController::SetupInputComponent()
 	ShooterInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &ThisClass::Input_Crouch);
 }
 
+void AShooterPlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+	bPawnAlive = true;
+}
+
 void AShooterPlayerController::Input_Crouch()
 {
 	if (!IsValid(GetCharacter())) return;
