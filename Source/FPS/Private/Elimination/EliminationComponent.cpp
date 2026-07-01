@@ -39,7 +39,7 @@ void UEliminationComponent::ProcessElimination(bool bHeadShot, AShooterPlayerSta
 	
 	ESpecialElimType SpecialElimType{};
 	
-	// Process Head Shot
+	ProcessHeadshot(bHeadShot, SpecialElimType, AttackerPS);
 	// Process Sequential Eliminations
 	// Process Streaks
 	// Handle First Blood
@@ -49,6 +49,16 @@ void UEliminationComponent::ProcessElimination(bool bHeadShot, AShooterPlayerSta
 		// Tell the client which special elims we got
 	// else (We just got a regular elim)
 		// Just tell the client we got a regular elim
+}
+
+void UEliminationComponent::ProcessHeadshot(bool bHeadShot, ESpecialElimType& OutElimType,
+	AShooterPlayerState* AttackerPS)
+{
+	if (bHeadShot)
+	{
+		OutElimType |= ESpecialElimType::Headshot;
+		AttackerPS->AddHeadShotElim();
+	}
 }
 
 void UEliminationComponent::ProcessHitOrMiss(bool bHit, AShooterPlayerState* AttackerPS)
