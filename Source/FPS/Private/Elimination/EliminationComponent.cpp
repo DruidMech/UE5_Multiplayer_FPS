@@ -54,9 +54,8 @@ void UEliminationComponent::ProcessElimination(bool bHeadShot, AShooterPlayerSta
 	if (IsValid(GameState))
 	{
 		HandleFirstBlood(GameState, SpecialElimType, AttackerPS);
+		UpdateLeaderStatus(GameState, SpecialElimType, AttackerPS, VictimPS);
 	}
-
-	// Update Leader Status
 	
 	// if (Has Special Elim Types)
 		// Tell the client which special elims we got
@@ -127,6 +126,35 @@ void UEliminationComponent::HandleFirstBlood(AShooterGameStateBase* GameState, E
 	{
 		OutElimType |= ESpecialElimType::FirstBlood;
 		AttackerPS->GotFirstBlood();
+	}
+}
+
+void UEliminationComponent::UpdateLeaderStatus(AShooterGameStateBase* GameState, ESpecialElimType& OutElimType,
+	AShooterPlayerState* AttackerPS, AShooterPlayerState* VictimPS)
+{
+	AShooterPlayerState* LastLeader =  GameState->GetSoleLeader();
+	const bool bAttackerWasTiedForTheLead = GameState->IsTiedForTheLead(AttackerPS);
+	GameState->UpdateLeader();
+	if (!bAttackerWasTiedForTheLead && GameState->IsTiedForTheLead(AttackerPS))
+	{
+		// Attacker was not tied for the lead before and is now tied for the lead
+		OutElimType |= ESpecialElimType::TiedTheLeader;
+	}
+	if (IsValid(LastLeader) && LastLeader != GameState->GetSoleLeader())
+	{
+		// LastLeader has lost the lead
+		LastLeader->Client_LostTheLead();
+		
+		if (VictimPS == LastLeader)
+		{
+			OutElimType |= ESpecialElimType::Dethrone;
+			AttackerPS->AddDethroneElim();
+		}
+	}
+	
+	if (AttackerPS != LastLeader && AttackerPS == GameState->GetSoleLeader())
+	{
+		OutElimType |= ESpecialElimType::GainedTheLead;
 	}
 }
 
