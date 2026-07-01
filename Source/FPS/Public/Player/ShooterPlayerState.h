@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Data/SpecialElimData.h"
 #include "GameFramework/PlayerState.h"
 #include "ShooterPlayerState.generated.h"
 
@@ -51,6 +52,9 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "FPS|SpecialElims")
 	TSubclassOf<USpecialElim> SpecialElimWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "FPS|SpecialElims")
+	float ElimDisplayTime;
 	
 private:
 	int32 ScoredElims;
@@ -70,4 +74,8 @@ private:
 	TWeakObjectPtr<APlayerState> LastAttacker;
 	
 	TArray<ESpecialElimType> DecodeElimBitmask(ESpecialElimType ElimTypeBitmask);
+	void ProcessNextSpecialElim();
+	void ShowSpecialElim(const FSpecialElimInfo& ElimMessageInfo);
+	TQueue<FSpecialElimInfo> SpecialElimQueue;
+	bool bIsProcessingQueue;
 };
