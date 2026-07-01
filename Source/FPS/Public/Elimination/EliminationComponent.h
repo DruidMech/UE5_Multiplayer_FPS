@@ -20,11 +20,18 @@ public:
 	
 	UFUNCTION()
 	void OnRoundReported(AActor* Attacker, AActor* Victim, bool bHit, bool bHeadShot, bool bLethal);
+
+	UPROPERTY(EditDefaultsOnly, Category = "FPS|Elimination")
+	float SequentialElimInterval;
 	
 private:
+	
+	float LastElimTime;
+	int32 SequentialElims;
 	
 	AShooterPlayerState* GetPlayerStateFromActor(AActor* Actor);
 	void ProcessHitOrMiss(bool bHit, AShooterPlayerState* AttackerPS);
 	void ProcessElimination(bool bHeadShot, AShooterPlayerState* AttackerPS, AShooterPlayerState* VictimPS);
 	void ProcessHeadshot(bool bHeadShot, ESpecialElimType& OutElimType, AShooterPlayerState* AttackerPS);
+	void ProcessSequentialEliminations(ESpecialElimType& OutElimType, AShooterPlayerState* AttackerPS);
 };
