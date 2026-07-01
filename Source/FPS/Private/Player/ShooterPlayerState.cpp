@@ -128,6 +128,17 @@ int32 AShooterPlayerState::GetScoredElims() const
 	return ScoredElims;
 }
 
+void AShooterPlayerState::Client_ScoredElim_Implementation(int32 ElimScore)
+{
+	
+}
+
+void AShooterPlayerState::Client_SpecialElim_Implementation(const ESpecialElimType& SpecialElim,
+	int32 SequentialElimCount, int32 StreakCount, int32 ElimScore)
+{
+	
+}
+
 void AShooterPlayerState::Client_LostTheLead_Implementation()
 {
 	// TODO: Show the client that they've lost the lead.
