@@ -102,3 +102,23 @@ void AShooterPlayerState::IsNowWinner()
 {
 	bWinner = true;
 }
+
+void AShooterPlayerState::SetOnStreak(bool bIsOnStreak)
+{
+	bOnStreak = bIsOnStreak;
+}
+
+void AShooterPlayerState::SetLastAttacker(APlayerState* Attacker)
+{
+	LastAttacker = Attacker;
+}
+
+bool AShooterPlayerState::IsOnStreak() const
+{
+	return bOnStreak;
+}
+
+APlayerState* AShooterPlayerState::GetLastAttacker() const
+{
+	return LastAttacker.IsValid() ? LastAttacker.Get() : nullptr;
+}
