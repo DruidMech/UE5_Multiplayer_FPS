@@ -4,7 +4,9 @@
 #include "Elimination/EliminationComponent.h"
 
 #include "Engine/World.h"
+#include "Game/ShooterGameStateBase.h"
 #include "GameFramework/Pawn.h"
+#include "Kismet/GameplayStatics.h"
 #include "Player/ShooterPlayerState.h"
 #include "ShooterTypes/ShooterTypes.h"
 
@@ -47,7 +49,13 @@ void UEliminationComponent::ProcessElimination(bool bHeadShot, AShooterPlayerSta
 	ProcessHeadshot(bHeadShot, SpecialElimType, AttackerPS);
 	ProcessSequentialEliminations(SpecialElimType, AttackerPS);
 	ProcessStreaks(SpecialElimType, AttackerPS, VictimPS);
-	// Handle First Blood
+
+	AShooterGameStateBase* GameState = Cast<AShooterGameStateBase>(UGameplayStatics::GetGameState(AttackerPS));
+	if (IsValid(GameState))
+	{
+		HandleFirstBlood(GameState, SpecialElimType, AttackerPS);
+	}
+
 	// Update Leader Status
 	
 	// if (Has Special Elim Types)
@@ -110,6 +118,16 @@ void UEliminationComponent::ProcessStreaks(ESpecialElimType& OutElimType, AShoot
 		AttackerPS->SetLastAttacker(nullptr);
 	}
 	VictimPS->SetLastAttacker(AttackerPS);
+}
+
+void UEliminationComponent::HandleFirstBlood(AShooterGameStateBase* GameState, ESpecialElimType& OutElimType,
+	AShooterPlayerState* AttackerPS)
+{
+	if (!GameState->HasFirstBloodBeenHad())
+	{
+		OutElimType |= ESpecialElimType::FirstBlood;
+		AttackerPS->GotFirstBlood();
+	}
 }
 
 void UEliminationComponent::ProcessHitOrMiss(bool bHit, AShooterPlayerState* AttackerPS)
