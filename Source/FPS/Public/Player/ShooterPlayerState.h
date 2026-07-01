@@ -32,6 +32,7 @@ public:
 	
 	bool IsOnStreak() const;
 	APlayerState* GetLastAttacker() const;
+	int32 GetScoredElims() const;
 	
 private:
 	int32 ScoredElims;
